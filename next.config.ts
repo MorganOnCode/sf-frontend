@@ -54,6 +54,13 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [{ source: "/", destination: "/contacts", permanent: true }];
   },
+  experimental: {
+    // A photo reaches the server action as a base64 `data:` URL inside the form
+    // body. The API caps a photo at 512 KB decoded, which is ~683 KB of base64,
+    // and Next defaults this limit to 1 MB — too tight once the rest of the form
+    // and multipart overhead are added. 2 MB leaves room without inviting abuse.
+    serverActions: { bodySizeLimit: "2mb" },
+  },
   env: {
     NEXT_PUBLIC_APP_VERSION: appVersion,
     NEXT_PUBLIC_BUILD_NUMBER: buildNumber,

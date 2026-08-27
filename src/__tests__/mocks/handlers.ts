@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { apiBaseUrl } from "@/lib/apiClient";
-import type { Contact, ContactPage } from "@/lib/contacts/types";
+import type { Contact, ContactListItem, ContactPage } from "@/lib/contacts/types";
 
 /** Prefix a path with the configured API base so handlers match apiClient URLs. */
 export function api(path: string): string {
@@ -19,6 +19,7 @@ export function makeContact(overrides: Partial<Contact> = {}): Contact {
     phone: "+1-415-555-0101",
     company: "Analytical Engines",
     job_title: "Mathematician",
+    photo: null,
     address: null,
     city: "San Francisco",
     state: "CA",
@@ -32,9 +33,21 @@ export function makeContact(overrides: Partial<Contact> = {}): Contact {
   };
 }
 
-export function makePage(items: Contact[], total = items.length): ContactPage {
-  return { items, total, limit: 25, offset: 0 };
+/** Strip a contact down to what a list page returns: no photo, just the flag. */
+export function toListItem(contact: Contact): ContactListItem {
+  const { photo, ...rest } = contact;
+  return { ...rest, has_photo: photo !== null };
 }
+
+export function makePage(
+  items: Contact[],
+  total = items.length,
+): ContactPage {
+  return { items: items.map(toListItem), total, limit: 25, offset: 0 };
+}
+
+/** The list rows the table is given, matching what `makePage` would send. */
+export const CONTACT_ROWS: ContactListItem[] = [];
 
 export const CONTACTS: Contact[] = [
   makeContact(),
@@ -48,6 +61,8 @@ export const CONTACTS: Contact[] = [
     full_name: "Grace Hopper",
   }),
 ];
+
+CONTACT_ROWS.push(...CONTACTS.map(toListItem));
 
 export const handlers = [
   http.get(api("/health"), () =>
