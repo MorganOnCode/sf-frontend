@@ -1,19 +1,27 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { Fragment, useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { AlertCircle, Loader2 } from "lucide-react";
 import Field from "@/components/ui/Field";
 import PhotoField from "@/components/contacts/PhotoField";
+import AddressFields from "@/components/contacts/AddressFields";
 import Button, { buttonClasses } from "@/components/ui/Button";
 import { CONTACT_FIELD_GROUPS } from "@/lib/contacts/schema";
 import {
   EMPTY_FORM_STATE,
+  type AddressFormValues,
   type Contact,
-  type ContactInput,
+  type ContactTextField,
   type FormState,
 } from "@/lib/contacts/types";
+
+/**
+ * The address editor sits between the contact's own details and the free-text
+ * notes, so the sheet reads identity → where they are → anything else.
+ */
+const GROUP_BEFORE_ADDRESSES = "Notes";
 
 export type ContactFormAction = (
   state: FormState,
@@ -58,8 +66,22 @@ export default function ContactForm({
   const [state, formAction] = useActionState(action, EMPTY_FORM_STATE);
   const [photoBusy, setPhotoBusy] = useState(false);
 
-  function valueFor(name: keyof ContactInput): string {
+  function valueFor(name: ContactTextField): string {
     return state.values?.[name] ?? contact?.[name] ?? "";
+  }
+
+  /** A rejected submit echoes its rows back, so nothing typed is lost. */
+  function addressRows(): AddressFormValues[] {
+    if (state.addresses) return state.addresses;
+
+    return (contact?.addresses ?? []).map((address) => ({
+      type: address.type,
+      street: address.street ?? "",
+      city: address.city ?? "",
+      state: address.state ?? "",
+      postal_code: address.postal_code ?? "",
+      country: address.country ?? "",
+    }));
   }
 
   return (
@@ -99,29 +121,38 @@ export default function ContactForm({
       </fieldset>
 
       {CONTACT_FIELD_GROUPS.map((group) => (
-        <fieldset key={group.title} className="space-y-4">
-          <legend className="sr-only">{group.title}</legend>
+        <Fragment key={group.title}>
+          {group.title === GROUP_BEFORE_ADDRESSES ? (
+            <AddressFields
+              defaultValue={addressRows()}
+              errors={state.addressErrors}
+            />
+          ) : null}
 
-          <div className="border-b border-hairline pb-1.5">
-            <h2 className="font-display text-base font-semibold text-foreground">
-              {group.title}
-            </h2>
-            <span className="text-xs text-muted-foreground">
-              {group.description}
-            </span>
-          </div>
+          <fieldset className="space-y-4">
+            <legend className="sr-only">{group.title}</legend>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            {group.fields.map((field) => (
-              <Field
-                key={field.name}
-                field={field}
-                defaultValue={valueFor(field.name)}
-                error={state.fieldErrors?.[field.name]}
-              />
-            ))}
-          </div>
-        </fieldset>
+            <div className="border-b border-hairline pb-1.5">
+              <h2 className="font-display text-base font-semibold text-foreground">
+                {group.title}
+              </h2>
+              <span className="text-xs text-muted-foreground">
+                {group.description}
+              </span>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {group.fields.map((field) => (
+                <Field
+                  key={field.name}
+                  field={field}
+                  defaultValue={valueFor(field.name)}
+                  error={state.fieldErrors?.[field.name]}
+                />
+              ))}
+            </div>
+          </fieldset>
+        </Fragment>
       ))}
 
       <div className="flex items-center gap-2 border-t border-hairline pt-4">

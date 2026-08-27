@@ -2,13 +2,19 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronLeft, Pencil } from "lucide-react";
+import { Briefcase, ChevronLeft, House, MapPin, Pencil } from "lucide-react";
 import ContactAvatar from "@/components/contacts/ContactAvatar";
 import Blueprint from "@/components/ui/Blueprint";
 import DeleteContactButton from "@/components/contacts/DeleteContactButton";
 import { buttonClasses } from "@/components/ui/Button";
 import { getContact } from "@/lib/contacts/api";
-import { addressLine, formatTimestamp, jobLine } from "@/lib/contacts/format";
+import {
+  addressLines,
+  formatTimestamp,
+  groupAddressesByType,
+  jobLine,
+} from "@/lib/contacts/format";
+import type { Address, AddressType } from "@/lib/contacts/types";
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -40,6 +46,48 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
+const TYPE_ICONS: Record<AddressType, typeof House> = {
+  home: House,
+  work: Briefcase,
+  other: MapPin,
+};
+
+/** One address, drawn as its own small plate on the sheet. */
+function AddressCard({ address, number }: { address: Address; number: number }) {
+  const Icon = TYPE_ICONS[address.type];
+  const lines = addressLines(address);
+
+  return (
+    <Blueprint className="flex flex-col gap-2 p-3">
+      <div className="flex items-center justify-between gap-2">
+        <span
+          className={`tag gap-1.5 uppercase tracking-wider ${
+            address.type === "other" ? "tag-neutral" : "tag-accent"
+          }`}
+        >
+          <Icon className="h-3 w-3" strokeWidth={1.5} aria-hidden="true" />
+          {address.type}
+        </span>
+        <span className="font-mono text-[10px] tracking-wider text-muted-foreground">
+          ADDR-{String(number).padStart(2, "0")}
+        </span>
+      </div>
+
+      {lines.length ? (
+        <p className="text-[13px] leading-relaxed text-foreground">
+          {lines.map((line, index) => (
+            <span key={line + index} className="block">
+              {line}
+            </span>
+          ))}
+        </p>
+      ) : (
+        <p className="text-[13px] text-muted-foreground/60">No details recorded.</p>
+      )}
+    </Blueprint>
+  );
+}
+
 /** The record's own numbers, set as a drawing's title block. */
 function MetaCell({ label, value }: { label: string; value: string }) {
   return (
@@ -55,7 +103,7 @@ export default async function ContactDetailPage({ params }: PageProps) {
   if (!contact) notFound();
 
   const subtitle = jobLine(contact);
-  const address = addressLine(contact);
+  const groups = groupAddressesByType(contact.addresses);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
@@ -119,13 +167,43 @@ export default async function ContactDetailPage({ params }: PageProps) {
         </Row>
         <Row label="Company">{contact.company}</Row>
         <Row label="Job title">{contact.job_title}</Row>
-        <Row label="Address">{address}</Row>
         <Row label="Notes">
           {contact.notes ? (
             <span className="whitespace-pre-wrap">{contact.notes}</span>
           ) : null}
         </Row>
       </Blueprint>
+
+      <section className="space-y-4">
+        <h2 className="font-display text-[13px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+          Addresses · {contact.addresses.length}
+        </h2>
+
+        {groups.length ? (
+          // Grouped by type, in a fixed order, so a contact's home addresses
+          // read together and the sections never reshuffle between renders.
+          groups.map((group) => (
+            <div key={group.type} className="space-y-2">
+              <h3 className="text-xs text-muted-foreground">
+                {group.label} · {group.addresses.length}
+              </h3>
+              <div className="grid gap-5 sm:grid-cols-2">
+                {group.addresses.map((address) => (
+                  <AddressCard
+                    key={address.id}
+                    address={address}
+                    number={contact.addresses.indexOf(address) + 1}
+                  />
+                ))}
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="border border-dashed border-border px-4 py-6 text-center text-[13px] text-muted-foreground">
+            No addresses on file for {contact.first_name}.
+          </p>
+        )}
+      </section>
 
       <div className="flex flex-wrap gap-x-6 gap-y-1 border-t border-hairline pt-3 font-mono text-[11px] uppercase tracking-wide">
         <MetaCell label="ID" value={String(contact.id)} />

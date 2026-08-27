@@ -20,11 +20,17 @@ export function makeContact(overrides: Partial<Contact> = {}): Contact {
     company: "Analytical Engines",
     job_title: "Mathematician",
     photo: null,
-    address: null,
-    city: "San Francisco",
-    state: "CA",
-    postal_code: null,
-    country: "USA",
+    addresses: [
+      {
+        id: 1,
+        type: "work",
+        street: null,
+        city: "San Francisco",
+        state: "CA",
+        postal_code: null,
+        country: "USA",
+      },
+    ],
     notes: null,
     created_at: "2026-08-19T17:04:53.743932Z",
     updated_at: "2026-08-19T17:04:53.743936Z",
@@ -33,9 +39,10 @@ export function makeContact(overrides: Partial<Contact> = {}): Contact {
   };
 }
 
-/** Strip a contact down to what a list page returns: no photo, just the flag. */
+/** Strip a contact down to what a list page returns: no photo, no addresses. */
 export function toListItem(contact: Contact): ContactListItem {
-  const { photo, ...rest } = contact;
+  const { photo, addresses, ...rest } = contact;
+  void addresses;
   return { ...rest, has_photo: photo !== null };
 }
 

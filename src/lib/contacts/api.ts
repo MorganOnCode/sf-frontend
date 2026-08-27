@@ -4,6 +4,7 @@ import { ApiError, apiFetch, apiJson } from "@/lib/apiClient";
 import type {
   Contact,
   ContactInput,
+  ContactTextField,
   ContactPage,
   HealthResponse,
   SortField,
@@ -126,15 +127,15 @@ export function apiErrorMessage(error: ApiError, fallback: string): string {
  */
 export function toFieldErrors(
   error: ApiError,
-): Partial<Record<keyof ContactInput, string>> {
+): Partial<Record<ContactTextField, string>> {
   const detail = error.json<{ detail?: ValidationIssue[] }>()?.detail;
   if (!Array.isArray(detail)) return {};
 
-  const fieldErrors: Partial<Record<keyof ContactInput, string>> = {};
+  const fieldErrors: Partial<Record<ContactTextField, string>> = {};
   for (const issue of detail) {
     const field = issue.loc?.[issue.loc.length - 1];
     if (typeof field === "string" && field !== "body") {
-      fieldErrors[field as keyof ContactInput] ??= issue.msg;
+      fieldErrors[field as ContactTextField] ??= issue.msg;
     }
   }
   return fieldErrors;
