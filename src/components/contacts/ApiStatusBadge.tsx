@@ -13,7 +13,7 @@ export default function ApiStatusBadge({
 
   return (
     <span
-      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/40 px-2.5 py-1 text-[11px] text-muted-foreground"
+      className={`tag gap-1.5 ${ok ? "tag-accent" : "tag-outline"}`}
       title={
         ok
           ? `API healthy · ${health?.database} · ${health?.contacts} stored`
@@ -22,10 +22,10 @@ export default function ApiStatusBadge({
     >
       <span
         aria-hidden="true"
-        className={`h-1.5 w-1.5 rounded-full ${ok ? "bg-success" : "bg-destructive"}`}
+        className="h-1.5 w-1.5 rounded-full bg-current"
       />
-      <span className="font-mono">
-        {ok ? `api ok · ${health?.database}` : "api unreachable"}
+      <span className="uppercase tracking-wider">
+        {ok ? `API OK · ${health?.contacts}` : "API unreachable"}
       </span>
     </span>
   );

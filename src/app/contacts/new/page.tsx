@@ -17,13 +17,14 @@ export default function NewContactPage() {
           href="/contacts"
           className="inline-flex items-center gap-1 text-[13px] text-muted-foreground hover:text-foreground"
         >
-          <ChevronLeft className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+          <ChevronLeft className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
           All contacts
         </Link>
-        <h1 className="mt-2 font-display text-2xl font-bold tracking-tight text-foreground">
+        <div className="kicker mt-2">Address book · New record</div>
+        <h1 className="font-display text-[26px] font-semibold text-foreground">
           New contact
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 text-[13px] text-muted-foreground">
           Emails are unique across the address book.
         </p>
       </div>

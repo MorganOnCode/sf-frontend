@@ -9,18 +9,6 @@ export function initials(contact: Pick<Contact, "first_name" | "last_name">) {
     .trim();
 }
 
-/**
- * Stable hue per contact so the same person keeps the same avatar colour
- * across renders and machines (no randomness, no hydration mismatch).
- */
-export function avatarHue(seed: string): number {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i += 1) {
-    hash = (hash * 31 + seed.charCodeAt(i)) % 360;
-  }
-  return hash;
-}
-
 // Rendered on the server and hydrated on the client, so pin the locale and zone
 // rather than letting each side pick its own and mismatch.
 const TIMESTAMP_FORMAT = new Intl.DateTimeFormat("en-GB", {

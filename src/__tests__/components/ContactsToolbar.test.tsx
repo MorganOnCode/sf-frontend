@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ContactsToolbar from "@/components/contacts/ContactsToolbar";
 import { DEFAULT_LIST_QUERY } from "@/lib/contacts/query";
@@ -56,13 +56,20 @@ describe("ContactsToolbar", () => {
   it("changes the page size", async () => {
     render(<ContactsToolbar query={DEFAULT_LIST_QUERY} />);
 
-    await userEvent.selectOptions(
-      screen.getByRole("combobox", { name: /contacts per page/i }),
-      "50",
-    );
+    const sizes = screen.getByRole("group", { name: /contacts per page/i });
+    await userEvent.click(within(sizes).getByRole("button", { name: "50" }));
 
     expect(replace).toHaveBeenCalledWith("/contacts?perPage=50", {
       scroll: false,
     });
+  });
+
+  it("marks the page size in use", () => {
+    render(<ContactsToolbar query={DEFAULT_LIST_QUERY} />);
+
+    const sizes = screen.getByRole("group", { name: /contacts per page/i });
+    expect(
+      within(sizes).getByRole("button", { name: String(DEFAULT_LIST_QUERY.perPage) }),
+    ).toHaveAttribute("aria-pressed", "true");
   });
 });

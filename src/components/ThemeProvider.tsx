@@ -6,7 +6,9 @@ type Theme = "dark" | "light";
 
 const THEME_STORAGE_KEY = "app-theme";
 const THEME_CHANGE_EVENT = "app-theme-change";
-const DEFAULT_THEME: Theme = "dark";
+// The system is a light technical ground — paper first. Dark stays available
+// through the toggle, as a faithful inversion of the same tokens.
+const DEFAULT_THEME: Theme = "light";
 
 const ThemeContext = createContext<{ theme: Theme; toggle: () => void }>({
   theme: DEFAULT_THEME,

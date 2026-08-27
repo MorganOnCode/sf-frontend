@@ -32,7 +32,7 @@ export default function GlobalError({
 
       <div className="mt-6 flex justify-center">
         <Button onClick={reset}>
-          <RotateCw className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+          <RotateCw className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
           Try again
         </Button>
       </div>

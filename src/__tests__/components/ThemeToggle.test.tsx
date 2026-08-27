@@ -18,24 +18,24 @@ beforeEach(() => {
 });
 
 describe("ThemeToggle", () => {
-  it("defaults to dark and offers to switch to light", () => {
+  it("defaults to the light ground and offers to switch to dark", () => {
     renderToggle();
-    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
     expect(
-      screen.getByRole("button", { name: /switch to light mode/i }),
+      screen.getByRole("button", { name: /switch to dark mode/i }),
     ).toBeInTheDocument();
   });
 
   it("persists the chosen theme", async () => {
     renderToggle();
     await userEvent.click(
-      screen.getByRole("button", { name: /switch to light mode/i }),
+      screen.getByRole("button", { name: /switch to dark mode/i }),
     );
 
-    expect(localStorage.getItem("app-theme")).toBe("light");
-    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
+    expect(localStorage.getItem("app-theme")).toBe("dark");
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
     expect(
-      screen.getByRole("button", { name: /switch to dark mode/i }),
+      screen.getByRole("button", { name: /switch to light mode/i }),
     ).toBeInTheDocument();
   });
 });

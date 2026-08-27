@@ -147,13 +147,13 @@ export default function PhotoField({
               "cursor-pointer peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ring",
             )}
           >
-            <ImageUp className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+            <ImageUp className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
             {photo ? "Change photo" : "Upload photo"}
           </label>
 
           {photo ? (
             <Button variant="ghost" onClick={handleRemove}>
-              <Trash2 className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+              <Trash2 className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
               Remove
             </Button>
           ) : null}

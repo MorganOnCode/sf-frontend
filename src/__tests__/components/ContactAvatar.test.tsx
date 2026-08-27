@@ -28,9 +28,10 @@ describe("ContactAvatar", () => {
       <ContactAvatar contact={makeContact({ photo: PHOTO })} size="lg" />,
     );
 
+    // The frame is the circle and the image fills it, so both carry the radius.
+    expect(container.querySelector("span")).toHaveClass("rounded-full", "duotone");
     expect(container.querySelector("img")).toHaveClass(
       "rounded-full",
-      "aspect-square",
       "object-cover",
     );
   });
@@ -40,7 +41,8 @@ describe("ContactAvatar", () => {
       <ContactAvatar contact={makeContact({ photo: PHOTO })} />,
     );
 
-    expect(container.querySelector("img")).toHaveAttribute("aria-hidden", "true");
+    expect(container.querySelector("span")).toHaveAttribute("aria-hidden", "true");
+    expect(container.querySelector("img")).toHaveAttribute("alt", "");
   });
 });
 

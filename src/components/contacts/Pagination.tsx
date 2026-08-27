@@ -53,12 +53,12 @@ export default function Pagination({
             rel="prev"
             className={buttonClasses("secondary", "sm")}
           >
-            <ChevronLeft className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+            <ChevronLeft className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
             Previous
           </Link>
         ) : (
           <span className={`${buttonClasses("secondary", "sm")} opacity-50`} aria-disabled="true">
-            <ChevronLeft className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+            <ChevronLeft className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
             Previous
           </span>
         )}
@@ -71,12 +71,12 @@ export default function Pagination({
             className={buttonClasses("secondary", "sm")}
           >
             Next
-            <ChevronRight className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+            <ChevronRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
           </Link>
         ) : (
           <span className={`${buttonClasses("secondary", "sm")} opacity-50`} aria-disabled="true">
             Next
-            <ChevronRight className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+            <ChevronRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
           </span>
         )}
       </div>
