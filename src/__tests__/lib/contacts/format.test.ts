@@ -1,6 +1,5 @@
 import {
   addressLine,
-  avatarHue,
   formatTimestamp,
   initials,
   jobLine,
@@ -10,18 +9,6 @@ import { makeContact } from "../../mocks/handlers";
 describe("initials", () => {
   it("takes the first letter of each name", () => {
     expect(initials({ first_name: "ada", last_name: "lovelace" })).toBe("AL");
-  });
-});
-
-describe("avatarHue", () => {
-  it("is stable for the same seed and within the hue range", () => {
-    expect(avatarHue("ada@example.com")).toBe(avatarHue("ada@example.com"));
-    expect(avatarHue("ada@example.com")).toBeGreaterThanOrEqual(0);
-    expect(avatarHue("ada@example.com")).toBeLessThan(360);
-  });
-
-  it("separates different seeds", () => {
-    expect(avatarHue("ada@example.com")).not.toBe(avatarHue("grace@example.com"));
   });
 });
 

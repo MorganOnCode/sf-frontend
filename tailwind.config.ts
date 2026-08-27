@@ -53,15 +53,17 @@ const config: Config = {
         ring: "rgb(var(--ring) / <alpha-value>)",
         hairline: "rgb(var(--hairline) / <alpha-value>)",
       },
+      // Square corners are the system's defining move, so the scale collapses
+      // to zero. Circles stay explicit — `rounded-full` is untouched.
       borderRadius: {
         lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        md: "var(--radius)",
+        sm: "var(--radius)",
       },
       fontFamily: {
         sans: [
           "var(--font-sans)",
-          "Inter",
+          "Barlow",
           "ui-sans-serif",
           "system-ui",
           "sans-serif",
@@ -74,7 +76,7 @@ const config: Config = {
         ],
         display: [
           "var(--font-display)",
-          "Space Grotesk",
+          "Barlow Condensed",
           "var(--font-sans)",
           "sans-serif",
         ],

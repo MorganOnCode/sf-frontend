@@ -50,7 +50,7 @@ export default function DeleteContactButton({
           aria-label={`Delete ${contactName}`}
           className={variant === "ghost" ? "hover:text-destructive" : undefined}
         >
-          <Trash2 className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+          <Trash2 className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
           {withLabel ? "Delete" : null}
         </Button>
         {error ? (

@@ -67,11 +67,11 @@ export default function ContactForm({
       {state.status === "error" && state.message ? (
         <div
           role="alert"
-          className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2.5 text-sm text-foreground"
+          className="flex items-start gap-2 border border-primary/70 bg-primary/10 px-3 py-2.5 text-[13px] text-foreground"
         >
           <AlertCircle
-            className="mt-0.5 h-4 w-4 shrink-0 text-destructive"
-            strokeWidth={2}
+            className="mt-0.5 h-4 w-4 shrink-0 text-primary"
+            strokeWidth={1.5}
             aria-hidden="true"
           />
           <span>{state.message}</span>
@@ -81,13 +81,13 @@ export default function ContactForm({
       <fieldset className="space-y-4">
         <legend className="sr-only">Photo</legend>
 
-        <div className="border-b border-hairline pb-2">
-          <h2 className="font-display text-sm font-semibold text-foreground">
+        <div className="border-b border-hairline pb-1.5">
+          <h2 className="font-display text-base font-semibold text-foreground">
             Photo
           </h2>
-          <p className="text-[13px] text-muted-foreground">
-            Optional. Shown as a circular avatar throughout the app.
-          </p>
+          <span className="text-xs text-muted-foreground">
+            Shown as a circular avatar. Falls back to initials.
+          </span>
         </div>
 
         <PhotoField
@@ -102,13 +102,13 @@ export default function ContactForm({
         <fieldset key={group.title} className="space-y-4">
           <legend className="sr-only">{group.title}</legend>
 
-          <div className="border-b border-hairline pb-2">
-            <h2 className="font-display text-sm font-semibold text-foreground">
+          <div className="border-b border-hairline pb-1.5">
+            <h2 className="font-display text-base font-semibold text-foreground">
               {group.title}
             </h2>
-            <p className="text-[13px] text-muted-foreground">
+            <span className="text-xs text-muted-foreground">
               {group.description}
-            </p>
+            </span>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">

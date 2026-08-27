@@ -6,76 +6,91 @@
   /* Semantic design tokens (shadcn-style). Values are space-separated RGB channels
      so Tailwind can apply an alpha channel: rgb(var(--token) / <alpha-value>). */
   :root {
-    --background: 15 17 21;
-    --foreground: 237 239 243;
-    --surface: 22 25 31;
-    --card: 22 25 31;
-    --card-foreground: 237 239 243;
-    --popover: 26 29 36;
-    --popover-foreground: 237 239 243;
-    --primary: 122 152 255;
-    --primary-foreground: 12 14 18;
-    --secondary: 36 40 49;
-    --secondary-foreground: 237 239 243;
-    --muted: 31 35 43;
-    --muted-foreground: 154 161 175;
-    --accent: 122 152 255;
-    --accent-foreground: 12 14 18;
-    --destructive: 229 79 60;
-    --destructive-foreground: 246 245 240;
-    --success: 62 176 122;
-    --success-foreground: 12 14 18;
-    --warning: 226 168 60;
-    --warning-foreground: 12 14 18;
-    --border: 45 50 60;
-    --input: 36 40 49;
-    --ring: 122 152 255;
-    --hairline: 55 61 73;
+    --background: 22 24 26;
+    --foreground: 233 233 234;
+    --surface: 29 32 35;
+    --card: 22 24 26;
+    --card-foreground: 233 233 234;
+    --popover: 29 32 35;
+    --popover-foreground: 233 233 234;
+    --primary: 148 188 227;
+    --primary-foreground: 22 24 26;
+    --secondary: 35 38 42;
+    --secondary-foreground: 233 233 234;
+    --muted: 35 38 42;
+    --muted-foreground: 154 156 160;
+    --accent: 148 188 227;
+    --accent-foreground: 22 24 26;
+    --destructive: 181 217 253;
+    --destructive-foreground: 22 24 26;
+    --success: 148 188 227;
+    --success-foreground: 22 24 26;
+    --warning: 148 188 227;
+    --warning-foreground: 22 24 26;
+    --border: 58 62 68;
+    --input: 29 32 35;
+    --ring: 148 188 227;
+    --hairline: 58 62 68;
 
-    --radius: 0.5rem;
+    /* Square by design: the system draws wireframe objects, not soft blocks.
+       Circles are still explicit (`rounded-full` on avatars and status dots). */
+    --radius: 0px;
 
     --gradient-hero:
-      radial-gradient(ellipse at 30% 40%, rgba(122, 152, 255, 0.12), transparent 70%),
-      linear-gradient(180deg, rgba(15, 17, 21, 0.4) 0%, rgba(11, 13, 16, 0.95) 100%);
-    --gradient-accent: linear-gradient(135deg, rgb(146 172 255), rgb(96 126 236));
-    --gradient-fade-bottom: linear-gradient(180deg, transparent 0%, rgb(15 17 21) 100%);
+      radial-gradient(ellipse at 30% 40%, rgba(148, 188, 227, 0.1), transparent 70%),
+      linear-gradient(180deg, rgba(22, 24, 26, 0.4) 0%, rgba(18, 20, 22, 0.95) 100%);
+    --gradient-accent: linear-gradient(135deg, rgb(181 217 253), rgb(89 128 166));
+    --gradient-fade-bottom: linear-gradient(180deg, transparent 0%, rgb(22 24 26) 100%);
   }
 
   [data-theme="light"] {
-    --background: 250 250 251;
-    --foreground: 24 26 31;
-    --surface: 240 241 244;
-    --card: 255 255 255;
-    --card-foreground: 24 26 31;
-    --popover: 255 255 255;
-    --popover-foreground: 24 26 31;
-    --primary: 58 88 214;
-    --primary-foreground: 255 255 255;
-    --secondary: 232 234 240;
-    --secondary-foreground: 24 26 31;
-    --muted: 236 238 242;
-    --muted-foreground: 90 96 108;
-    --accent: 58 88 214;
-    --accent-foreground: 255 255 255;
-    --destructive: 192 50 33;
-    --destructive-foreground: 255 255 255;
-    --success: 26 128 84;
-    --success-foreground: 255 255 255;
-    --warning: 168 116 16;
-    --warning-foreground: 255 255 255;
-    --border: 214 217 224;
-    --input: 232 234 240;
-    --ring: 58 88 214;
-    --hairline: 214 217 224;
+    --background: 242 242 243;
+    --foreground: 29 31 32;
+    --surface: 233 233 234;
+    --card: 242 242 243;
+    --card-foreground: 29 31 32;
+    --popover: 233 233 234;
+    --popover-foreground: 29 31 32;
+    --primary: 89 128 166;
+    --primary-foreground: 242 242 243;
+    --secondary: 233 233 234;
+    --secondary-foreground: 29 31 32;
+    --muted: 231 231 234;
+    --muted-foreground: 93 93 96;
+    --accent: 89 128 166;
+    --accent-foreground: 242 242 243;
+    /* The system is mono: destructive is the accent's deep step, not a second
+       hue. Deletes stay explicit in wording rather than in colour. */
+    --destructive: 44 69 93;
+    --destructive-foreground: 242 242 243;
+    --success: 89 126 163;
+    --success-foreground: 242 242 243;
+    --warning: 65 97 128;
+    --warning-foreground: 242 242 243;
+    --border: 208 208 209;
+    --input: 233 233 234;
+    --ring: 89 128 166;
+    --hairline: 208 208 209;
 
     --gradient-hero:
-      radial-gradient(ellipse at 30% 40%, rgba(58, 88, 214, 0.08), transparent 70%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(250, 250, 251, 1) 100%);
-    --gradient-fade-bottom: linear-gradient(180deg, transparent 0%, rgb(250 250 251) 100%);
+      radial-gradient(ellipse at 30% 40%, rgba(89, 128, 166, 0.08), transparent 70%),
+      linear-gradient(180deg, rgba(242, 242, 243, 0.6) 0%, rgba(242, 242, 243, 1) 100%);
+    --gradient-fade-bottom: linear-gradient(180deg, transparent 0%, rgb(242 242 243) 100%);
   }
 
   html {
-    font-family: var(--font-sans, "Inter"), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-sans, "Barlow"), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display, "Barlow Condensed"), ui-sans-serif, sans-serif;
+    letter-spacing: -0.015em;
+    line-height: 1.12;
   }
 
   code,
@@ -102,16 +117,154 @@
 }
 
 @layer components {
-  /* Avatar tint. The hue comes from the contact's email (see lib/contacts/format),
-     so it is stable per person; only the lightness changes between themes. */
+  /* The initials fallback. A single accent tint rather than a per-person hue:
+     the system allows one colour, so faces are the only thing that varies. */
   .contact-avatar {
-    background: hsl(var(--avatar-hue) 65% 60% / 0.18);
-    color: hsl(var(--avatar-hue) 70% 74%);
+    background: rgb(var(--primary) / 0.16);
+    color: rgb(var(--primary));
   }
 
   [data-theme="light"] .contact-avatar {
-    background: hsl(var(--avatar-hue) 70% 45% / 0.12);
-    color: hsl(var(--avatar-hue) 65% 32%);
+    background: rgb(214 235 255);
+    color: rgb(44 69 93);
+  }
+
+  /* ── Blueprint frame ──────────────────────────────────────────────────
+     Cards, figures and the primary button are wireframe objects: square,
+     hairline-bordered, and marked at each corner with a "+" registration
+     cross drawn just outside the box. Add `.blueprint` and render the four
+     `<i class="corner …">` children — <Blueprint> does both. */
+  .blueprint {
+    position: relative;
+    border: 1px solid rgb(var(--hairline));
+  }
+
+  .blueprint > .corner {
+    position: absolute;
+    width: 11px;
+    height: 11px;
+    color: rgb(var(--foreground) / 0.55);
+  }
+  .blueprint > .corner::before,
+  .blueprint > .corner::after {
+    content: "";
+    position: absolute;
+    background: currentColor;
+  }
+  .blueprint > .corner::before {
+    left: 5px;
+    top: 0;
+    width: 1px;
+    height: 100%;
+  }
+  .blueprint > .corner::after {
+    top: 5px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+  }
+  .blueprint > .corner.tl {
+    top: -6px;
+    left: -6px;
+  }
+  .blueprint > .corner.tr {
+    top: -6px;
+    right: -6px;
+  }
+  .blueprint > .corner.bl {
+    bottom: -6px;
+    left: -6px;
+  }
+  .blueprint > .corner.br {
+    bottom: -6px;
+    right: -6px;
+  }
+
+  /* Photographs are screen-printed into the accent, so a page of avatars reads
+     as one drawing rather than a strip of competing colour. */
+  .duotone {
+    position: relative;
+    overflow: hidden;
+  }
+  .duotone::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: rgb(var(--primary));
+    mix-blend-mode: color;
+  }
+
+  /* Small tinted label — address types, the API badge, sheet numbers. */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    padding: 3px 10px;
+  }
+  .tag-accent {
+    background: rgb(var(--primary) / 0.16);
+    color: rgb(var(--primary));
+  }
+  [data-theme="light"] .tag-accent {
+    background: rgb(238 246 255);
+    color: rgb(44 69 93);
+  }
+  .tag-neutral {
+    background: rgb(var(--foreground) / 0.07);
+    color: rgb(var(--foreground) / 0.75);
+  }
+  .tag-outline {
+    border: 1px solid rgb(var(--primary));
+    color: rgb(var(--primary));
+  }
+
+  /* Segmented control on native radios — no script. Used for the page size,
+     and for picking an address type once a contact can have several. */
+  .seg {
+    display: inline-flex;
+    overflow: hidden;
+    border: 1px solid rgb(var(--border));
+  }
+  .seg-opt {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 150ms, color 150ms;
+  }
+  .seg-opt + .seg-opt {
+    border-left: 1px solid rgb(var(--border));
+  }
+  .seg-opt input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+  .seg-opt:has(input:checked),
+  .seg-opt[aria-pressed="true"] {
+    background: rgb(var(--primary));
+    color: rgb(var(--primary-foreground));
+  }
+  .seg-opt:not(:has(input:checked)):not([aria-pressed="true"]):hover {
+    background: rgb(var(--foreground) / 0.07);
+  }
+  .seg-opt:has(input:focus-visible) {
+    outline: 2px solid rgb(var(--ring));
+    outline-offset: -2px;
+  }
+
+  /* The uppercase kicker above a heading: "Address book · Sheet 01". */
+  .kicker {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgb(var(--primary));
   }
 }
 

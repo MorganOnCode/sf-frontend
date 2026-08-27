@@ -30,9 +30,9 @@ export default function ThemeToggle() {
     >
       {hydrated ? (
         theme === "dark" ? (
-          <Sun className="h-[18px] w-[18px]" strokeWidth={1.75} />
+          <Sun className="h-[18px] w-[18px]" strokeWidth={1.5} />
         ) : (
-          <Moon className="h-[18px] w-[18px]" strokeWidth={1.75} />
+          <Moon className="h-[18px] w-[18px]" strokeWidth={1.5} />
         )
       ) : (
         <span className="block h-[18px] w-[18px]" aria-hidden="true" />

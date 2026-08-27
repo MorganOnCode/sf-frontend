@@ -1,7 +1,7 @@
 import type { ContactFieldSpec } from "@/lib/contacts/schema";
 
 const CONTROL =
-  "w-full rounded-md border bg-input px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 transition-colors focus:bg-input";
+  "w-full min-h-9 border bg-input px-2.5 py-1.5 text-sm text-foreground caret-primary placeholder:text-muted-foreground/60 transition-colors";
 
 /**
  * One labelled form control, driven by the field metadata in
@@ -20,7 +20,7 @@ export default function Field({
   const errorId = `${id}-error`;
   const borderClass = error
     ? "border-destructive focus:border-destructive"
-    : "border-border focus:border-primary";
+    : "border-border hover:border-foreground/45 focus:border-primary";
 
   const shared = {
     id,
@@ -39,7 +39,7 @@ export default function Field({
     <div className={field.wide ? "sm:col-span-2" : undefined}>
       <label
         htmlFor={id}
-        className="mb-1.5 block text-[13px] font-medium text-foreground"
+        className="mb-1.5 block text-xs text-foreground/70"
       >
         {field.label}
         {field.required ? (

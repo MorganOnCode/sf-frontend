@@ -44,6 +44,14 @@ export default function ContactsToolbar({ query }: { query: ContactListQuery }) 
     debounce.current = setTimeout(() => navigate(value), DEBOUNCE_MS);
   }
 
+  function setPerPage(perPage: number) {
+    startTransition(() => {
+      router.replace(contactsHref(query, { perPage, page: 1 }), {
+        scroll: false,
+      });
+    });
+  }
+
   function clear() {
     clearTimeout(debounce.current ?? undefined);
     setTerm("");
@@ -55,7 +63,7 @@ export default function ContactsToolbar({ query }: { query: ContactListQuery }) 
       <div className="relative min-w-[220px] flex-1">
         <Search
           className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
-          strokeWidth={1.75}
+          strokeWidth={1.5}
           aria-hidden="true"
         />
         <input
@@ -64,7 +72,7 @@ export default function ContactsToolbar({ query }: { query: ContactListQuery }) 
           onChange={(event) => onSearchChange(event.target.value)}
           placeholder="Search name, email, company, or phone…"
           aria-label="Search contacts"
-          className="h-9 w-full rounded-md border border-border bg-input pl-9 pr-9 text-sm text-foreground placeholder:text-muted-foreground/70 focus:border-primary"
+          className="h-9 w-full border border-border bg-input pl-9 pr-9 text-sm text-foreground caret-primary placeholder:text-muted-foreground/70 hover:border-foreground/45 focus:border-primary"
         />
         <span className="absolute right-2.5 top-1/2 -translate-y-1/2">
           {isPending ? (
@@ -79,37 +87,31 @@ export default function ContactsToolbar({ query }: { query: ContactListQuery }) 
               aria-label="Clear search"
               className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:text-foreground"
             >
-              <X className="h-4 w-4" strokeWidth={1.75} />
+              <X className="h-4 w-4" strokeWidth={1.5} />
             </button>
           ) : null}
         </span>
       </div>
 
-      <label className="flex items-center gap-2 text-[13px] text-muted-foreground">
-        Per page
-        <select
-          value={query.perPage}
-          aria-label="Contacts per page"
-          onChange={(event) =>
-            startTransition(() => {
-              router.replace(
-                contactsHref(query, {
-                  perPage: Number(event.target.value),
-                  page: 1,
-                }),
-                { scroll: false },
-              );
-            })
-          }
-          className="h-9 rounded-md border border-border bg-input px-2 text-sm text-foreground focus:border-primary"
-        >
-          {PER_PAGE_OPTIONS.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-      </label>
+      {/* A segmented control rather than a select: four fixed choices read
+          better as a drawn switch, and every option stays one click away. */}
+      <div
+        role="group"
+        aria-label="Contacts per page"
+        className="seg text-muted-foreground"
+      >
+        {PER_PAGE_OPTIONS.map((option) => (
+          <button
+            key={option}
+            type="button"
+            aria-pressed={option === query.perPage}
+            onClick={() => setPerPage(option)}
+            className="seg-opt"
+          >
+            {option}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

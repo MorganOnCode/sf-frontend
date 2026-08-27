@@ -30,23 +30,21 @@ export default function SortHeader({
       <Link
         href={sortHref(query, field)}
         scroll={false}
-        className={`inline-flex items-center gap-1 rounded transition-colors ${
-          active
-            ? "text-foreground"
-            : "text-muted-foreground hover:text-foreground"
+        className={`inline-flex items-center gap-1.5 transition-colors ${
+          active ? "text-primary" : "hover:text-foreground"
         }`}
       >
         {label}
         {active ? (
           query.order === "asc" ? (
-            <ArrowUp className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
+            <ArrowUp className="h-3 w-3" strokeWidth={1.5} aria-hidden="true" />
           ) : (
-            <ArrowDown className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
+            <ArrowDown className="h-3 w-3" strokeWidth={1.5} aria-hidden="true" />
           )
         ) : (
           <ChevronsUpDown
-            className="h-3.5 w-3.5 opacity-50"
-            strokeWidth={2}
+            className="h-3 w-3 opacity-50"
+            strokeWidth={1.5}
             aria-hidden="true"
           />
         )}

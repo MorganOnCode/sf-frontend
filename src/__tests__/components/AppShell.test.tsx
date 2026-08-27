@@ -26,7 +26,7 @@ describe("AppShell", () => {
   it("renders the branding, nav, children and version footer", () => {
     renderShell();
 
-    expect(screen.getByRole("link", { name: "SF Contacts" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /^SF\s*CONTACTS$/ })).toHaveAttribute(
       "href",
       "/contacts",
     );
