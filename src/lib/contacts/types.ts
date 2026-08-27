@@ -12,6 +12,8 @@ export interface Contact {
   phone: string | null;
   company: string | null;
   job_title: string | null;
+  /** Base64 `data:` URL, or `null` when the contact has no photo. */
+  photo: string | null;
   address: string | null;
   city: string | null;
   state: string | null;

@@ -79,8 +79,16 @@ describe("formDataToValues", () => {
 
     expect(extracted.first_name).toBe("Grace");
     expect(extracted.last_name).toBe("");
+    // The text controls, plus `photo` — a hidden input fed by the file picker.
     expect(Object.keys(extracted).sort()).toEqual(
-      CONTACT_FIELDS.map((field) => field.name).sort(),
+      [...CONTACT_FIELDS.map((field) => field.name), "photo"].sort(),
     );
+  });
+
+  it("picks up the photo the file picker put in its hidden input", () => {
+    const formData = new FormData();
+    formData.set("photo", "data:image/jpeg;base64,AAAA");
+
+    expect(formDataToValues(formData).photo).toBe("data:image/jpeg;base64,AAAA");
   });
 });

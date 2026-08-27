@@ -1,4 +1,9 @@
 import { z } from "zod";
+import {
+  MAX_PHOTO_BYTES,
+  decodedByteLength,
+  isPhotoDataUrl,
+} from "./photo";
 import type { ContactInput } from "./types";
 
 /**
@@ -41,6 +46,20 @@ export const contactInputSchema = z.object({
   phone: optionalText(40, "Phone"),
   company: optionalText(200, "Company"),
   job_title: optionalText(200, "Job title"),
+  photo: z
+    .string()
+    .trim()
+    .transform((value) => value || null)
+    .nullable()
+    .default(null)
+    .refine(
+      (value) => value === null || isPhotoDataUrl(value),
+      "Photo must be a JPEG, PNG, GIF, or WebP image",
+    )
+    .refine(
+      (value) => value === null || decodedByteLength(value) <= MAX_PHOTO_BYTES,
+      `Photo must be ${MAX_PHOTO_BYTES / 1024 / 1024} MB or smaller`,
+    ),
   address: optionalText(300, "Address"),
   city: optionalText(120, "City"),
   state: optionalText(120, "State"),
@@ -214,14 +233,22 @@ export const CONTACT_FIELDS: ContactFieldSpec[] = CONTACT_FIELD_GROUPS.flatMap(
   (group) => group.fields,
 );
 
-/** Pull the contact fields out of a submitted form, as raw strings. */
+/**
+ * Pull the contact fields out of a submitted form, as raw strings.
+ *
+ * `photo` is read separately: it is a hidden input fed by the file picker, not
+ * one of the text controls described by `CONTACT_FIELDS`.
+ */
 export function formDataToValues(
   formData: FormData,
 ): Record<keyof ContactInput, string> {
-  return Object.fromEntries(
-    CONTACT_FIELDS.map((field) => [
-      field.name,
-      String(formData.get(field.name) ?? ""),
-    ]),
-  ) as Record<keyof ContactInput, string>;
+  return {
+    ...Object.fromEntries(
+      CONTACT_FIELDS.map((field) => [
+        field.name,
+        String(formData.get(field.name) ?? ""),
+      ]),
+    ),
+    photo: String(formData.get("photo") ?? ""),
+  } as Record<keyof ContactInput, string>;
 }
