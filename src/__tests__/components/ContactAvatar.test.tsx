@@ -43,3 +43,32 @@ describe("ContactAvatar", () => {
     expect(container.querySelector("img")).toHaveAttribute("aria-hidden", "true");
   });
 });
+
+describe("ContactAvatar on a list row", () => {
+  const ROW = {
+    id: 7,
+    first_name: "Grace",
+    last_name: "Hopper",
+    email: "grace@example.com",
+  };
+
+  it("fetches the photo by URL, because list rows carry no inline photo", () => {
+    const { container } = render(
+      <ContactAvatar contact={{ ...ROW, has_photo: true }} />,
+    );
+
+    expect(container.querySelector("img")).toHaveAttribute(
+      "src",
+      "/api/contacts/7/photo/",
+    );
+  });
+
+  it("shows initials when the row says there is no photo", () => {
+    const { container } = render(
+      <ContactAvatar contact={{ ...ROW, has_photo: false }} />,
+    );
+
+    expect(container.querySelector("img")).toBeNull();
+    expect(screen.getByText("GH")).toBeInTheDocument();
+  });
+});

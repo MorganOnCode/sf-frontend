@@ -1,7 +1,9 @@
 import {
   MAX_PHOTO_BYTES,
+  contactPhotoUrl,
   decodedByteLength,
   isPhotoDataUrl,
+  photoSrc,
 } from "@/lib/contacts/photo";
 
 function dataUrl(bytes: number, mediaType = "image/jpeg"): string {
@@ -39,5 +41,31 @@ describe("decodedByteLength", () => {
     expect(decodedByteLength(dataUrl(MAX_PHOTO_BYTES + 1))).toBeGreaterThan(
       MAX_PHOTO_BYTES,
     );
+  });
+});
+
+describe("photoSrc", () => {
+  it("uses the inline photo a single-contact read returns", () => {
+    expect(photoSrc({ id: 1, photo: dataUrl(9), has_photo: true })).toBe(dataUrl(9));
+  });
+
+  it("falls back to the photo route for a list row, which has no inline photo", () => {
+    expect(photoSrc({ id: 7, has_photo: true })).toBe(contactPhotoUrl(7));
+  });
+
+  it("returns null when the contact has no photo", () => {
+    expect(photoSrc({ id: 7, has_photo: false })).toBeNull();
+    expect(photoSrc({ id: 7, photo: null })).toBeNull();
+  });
+
+  it("returns null when a flag says yes but there is no id to fetch by", () => {
+    expect(photoSrc({ has_photo: true })).toBeNull();
+  });
+});
+
+describe("the size ceiling", () => {
+  it("leaves the whole data URL inside the server action body limit", () => {
+    // Next is configured for 2 MB; base64 inflates the decoded bytes by a third.
+    expect(dataUrl(MAX_PHOTO_BYTES).length).toBeLessThan(2 * 1024 * 1024);
   });
 });

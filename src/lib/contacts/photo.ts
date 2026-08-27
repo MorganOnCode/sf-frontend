@@ -15,8 +15,17 @@ export const ACCEPTED_PHOTO_TYPES: readonly string[] = [
   "image/webp",
 ];
 
-/** Largest decoded image the API stores. */
-export const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
+/**
+ * Largest decoded image the API stores — kept in step with its `MAX_PHOTO_BYTES`.
+ *
+ * The whole `data:` URL travels through a server action, and base64 inflates by
+ * a third, so this also has to leave the result comfortably inside the request
+ * body limit configured in `next.config.ts`.
+ */
+export const MAX_PHOTO_BYTES = 512 * 1024;
+
+/** How the limit is described to the user. */
+export const MAX_PHOTO_LABEL = `${MAX_PHOTO_BYTES / 1024} KB`;
 
 /** Longest edge a photo is resized to before it is uploaded. */
 export const PHOTO_MAX_EDGE = 512;
@@ -25,6 +34,30 @@ export const PHOTO_MAX_EDGE = 512;
 const PHOTO_QUALITY = 0.82;
 
 const PHOTO_DATA_URL = /^data:image\/(?:jpeg|png|gif|webp);base64,[A-Za-z0-9+/]*={0,2}$/;
+
+/**
+ * Where the browser fetches a contact's photo.
+ *
+ * List responses do not inline photos, so each avatar is a real request. It goes
+ * through the app's own route rather than the API directly, because the backend's
+ * address is server-only. The trailing slash matches `trailingSlash: true`, so the
+ * request is not answered with a redirect first.
+ */
+export function contactPhotoUrl(id: number): string {
+  return `/api/contacts/${id}/photo/`;
+}
+
+/** The avatar image for a contact, however its photo reached us, or `null`. */
+export function photoSrc(contact: {
+  id?: number;
+  photo?: string | null;
+  has_photo?: boolean;
+}): string | null {
+  // A single-contact read inlines the photo; a list row only says whether there is one.
+  if (contact.photo) return contact.photo;
+  if (contact.has_photo && contact.id != null) return contactPhotoUrl(contact.id);
+  return null;
+}
 
 export function isPhotoDataUrl(value: string): boolean {
   return PHOTO_DATA_URL.test(value);

@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { avatarHue, initials } from "@/lib/contacts/format";
+import { photoSrc } from "@/lib/contacts/photo";
 import type { Contact } from "@/lib/contacts/types";
 
 const SIZES = {
@@ -15,6 +16,19 @@ export type AvatarSize = keyof typeof SIZES;
 const CIRCLE = "inline-flex shrink-0 select-none items-center justify-center rounded-full";
 
 /**
+ * What the avatar needs. A single-contact read inlines `photo`; a list row
+ * carries `id` and `has_photo` instead, and `photoSrc` resolves either.
+ */
+export type AvatarContact = Pick<
+  Contact,
+  "first_name" | "last_name" | "email"
+> & {
+  id?: number;
+  photo?: string | null;
+  has_photo?: boolean;
+};
+
+/**
  * A contact's photo as a circular image, falling back to their initials —
  * tinted with a hue derived from their email — when there is no photo.
  */
@@ -22,18 +36,22 @@ export default function ContactAvatar({
   contact,
   size = "md",
 }: {
-  contact: Pick<Contact, "first_name" | "last_name" | "email" | "photo">;
+  contact: AvatarContact;
   size?: AvatarSize;
 }) {
-  if (contact.photo) {
+  const src = photoSrc(contact);
+
+  if (src) {
     return (
-      // The photo is a base64 `data:` URL, which next/image cannot optimise or
-      // serve — a plain <img> is the right element for it.
+      // The source is either a base64 `data:` URL or this app's own photo route,
+      // neither of which next/image can optimise — a plain <img> is correct here.
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src={contact.photo}
+        src={src}
         alt=""
         aria-hidden="true"
+        loading="lazy"
+        decoding="async"
         className={`${CIRCLE} aspect-square border border-hairline object-cover ${SIZES[size]}`}
       />
     );

@@ -1,7 +1,7 @@
 "use client";
 
-import { useId, useState, type ChangeEvent } from "react";
-import { ImageUp, Trash2, UserRound } from "lucide-react";
+import { useEffect, useId, useRef, useState, type ChangeEvent } from "react";
+import { ImageUp, Loader2, Trash2, UserRound } from "lucide-react";
 import ContactAvatar from "./ContactAvatar";
 import Button, { buttonClasses } from "@/components/ui/Button";
 import {
@@ -19,7 +19,7 @@ import type { Contact } from "@/lib/contacts/types";
 const MAX_SOURCE_BYTES = 25 * 1024 * 1024;
 
 /** Everything the initials fallback needs, minus the photo itself. */
-type AvatarContact = Pick<Contact, "first_name" | "last_name" | "email">;
+type FallbackContact = Pick<Contact, "first_name" | "last_name" | "email">;
 
 /**
  * Photo picker for the contact form.
@@ -34,24 +34,38 @@ export default function PhotoField({
   defaultValue = null,
   contact,
   error,
+  onBusyChange,
 }: {
   defaultValue?: string | null;
-  contact?: AvatarContact;
+  contact?: FallbackContact;
   error?: string;
+  /** Told when a conversion starts and finishes, so the form can hold Save. */
+  onBusyChange?: (busy: boolean) => void;
 }) {
   const [photo, setPhoto] = useState(defaultValue);
   const [pickerError, setPickerError] = useState<string | null>(null);
+  const [converting, setConverting] = useState(false);
+
+  // Identifies the current selection. Every pick and every removal bumps it, so
+  // a slow conversion that finishes late can tell it has been superseded and
+  // drop its result instead of overwriting a newer choice.
+  const selectionRef = useRef(0);
 
   const inputId = useId();
   const errorId = `${inputId}-error`;
   // A rejected file is the more recent news, so it wins over a stale server error.
   const message = pickerError ?? error;
 
+  useEffect(() => onBusyChange?.(converting), [converting, onBusyChange]);
+
   async function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     // Reset the input so picking the same file twice still fires a change.
     event.target.value = "";
     if (!file) return;
+
+    const selection = (selectionRef.current += 1);
+    const isCurrent = () => selectionRef.current === selection;
 
     if (!ACCEPTED_PHOTO_TYPES.includes(file.type)) {
       setPickerError("Choose a JPEG, PNG, GIF, or WebP image.");
@@ -64,12 +78,28 @@ export default function PhotoField({
       return;
     }
 
+    setConverting(true);
     try {
-      setPhoto(await downscaleToDataUrl(file));
+      const converted = await downscaleToDataUrl(file);
+      if (!isCurrent()) return;
+      setPhoto(converted);
       setPickerError(null);
     } catch {
-      setPickerError("That image could not be read. Try a different file.");
+      if (isCurrent()) {
+        setPickerError("That image could not be read. Try a different file.");
+      }
+    } finally {
+      if (isCurrent()) setConverting(false);
     }
+  }
+
+  function handleRemove() {
+    // Bumping the selection also cancels a conversion still in flight, so it
+    // cannot put the photo back after the user has removed it.
+    selectionRef.current += 1;
+    setPhoto(null);
+    setPickerError(null);
+    setConverting(false);
   }
 
   return (
@@ -122,20 +152,22 @@ export default function PhotoField({
           </label>
 
           {photo ? (
-            <Button
-              variant="ghost"
-              onClick={() => {
-                setPhoto(null);
-                setPickerError(null);
-              }}
-            >
+            <Button variant="ghost" onClick={handleRemove}>
               <Trash2 className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
               Remove
             </Button>
           ) : null}
         </div>
 
-        {message ? (
+        {converting ? (
+          <p
+            role="status"
+            className="flex items-center gap-1.5 text-[13px] text-muted-foreground"
+          >
+            <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+            Preparing photo…
+          </p>
+        ) : message ? (
           <p id={errorId} role="alert" className="text-[13px] text-destructive">
             {message}
           </p>

@@ -25,6 +25,17 @@ export interface Contact {
   full_name: string;
 }
 
+/**
+ * `ContactListItem` — a contact as a list page returns it.
+ *
+ * The API leaves `photo` out of list responses: a page holds up to 200 contacts,
+ * and an inline photo on every row would run to hundreds of megabytes. `has_photo`
+ * says whether to fetch the image or fall back to initials.
+ */
+export interface ContactListItem extends Omit<Contact, "photo"> {
+  has_photo: boolean;
+}
+
 /** Every editable field, i.e. `ContactCreate` / `ContactReplace`. */
 export type ContactInput = Omit<
   Contact,
@@ -33,7 +44,7 @@ export type ContactInput = Omit<
 
 /** `ContactPage` — one page of contacts plus the totals needed to paginate. */
 export interface ContactPage {
-  items: Contact[];
+  items: ContactListItem[];
   total: number;
   limit: number;
   offset: number;

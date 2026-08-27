@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   MAX_PHOTO_BYTES,
+  MAX_PHOTO_LABEL,
   decodedByteLength,
   isPhotoDataUrl,
 } from "./photo";
@@ -58,7 +59,7 @@ export const contactInputSchema = z.object({
     )
     .refine(
       (value) => value === null || decodedByteLength(value) <= MAX_PHOTO_BYTES,
-      `Photo must be ${MAX_PHOTO_BYTES / 1024 / 1024} MB or smaller`,
+      `Photo must be ${MAX_PHOTO_LABEL} or smaller`,
     ),
   address: optionalText(300, "Address"),
   city: optionalText(120, "City"),
