@@ -1,4 +1,9 @@
-import type { Contact } from "./types";
+import {
+  ADDRESS_TYPE_LABELS,
+  type Address,
+  type AddressType,
+  type Contact,
+} from "./types";
 
 /** Presentation helpers shared by the list, the detail page, and the cards. */
 
@@ -31,16 +36,40 @@ export function jobLine(contact: Pick<Contact, "job_title" | "company">): string
   return contact.job_title ?? contact.company ?? null;
 }
 
-/** Single-line postal address, skipping the parts that are not filled in. */
-export function addressLine(
-  contact: Pick<Contact, "address" | "city" | "state" | "postal_code" | "country">,
-): string | null {
-  const parts = [
-    contact.address,
-    contact.city,
-    [contact.state, contact.postal_code].filter(Boolean).join(" "),
-    contact.country,
+/**
+ * An address as lines, skipping the parts that are not filled in.
+ *
+ * State and postal code share a line the way they are written on an envelope.
+ */
+export function addressLines(address: Omit<Address, "id" | "type">): string[] {
+  return [
+    address.street,
+    address.city,
+    [address.state, address.postal_code].filter(Boolean).join(" "),
+    address.country,
   ].filter((part): part is string => Boolean(part && part.trim()));
+}
 
-  return parts.length ? parts.join(", ") : null;
+/** The same address on one line, for somewhere that has no room for four. */
+export function addressLine(
+  address: Omit<Address, "id" | "type">,
+): string | null {
+  const lines = addressLines(address);
+  return lines.length ? lines.join(", ") : null;
+}
+
+/**
+ * Addresses split by type, in the order the types are declared, so a contact's
+ * home addresses read together and the sections never reshuffle between renders.
+ */
+export function groupAddressesByType(
+  addresses: Address[],
+): { type: AddressType; label: string; addresses: Address[] }[] {
+  return (Object.keys(ADDRESS_TYPE_LABELS) as AddressType[])
+    .map((type) => ({
+      type,
+      label: ADDRESS_TYPE_LABELS[type],
+      addresses: addresses.filter((address) => address.type === type),
+    }))
+    .filter((group) => group.addresses.length > 0);
 }
