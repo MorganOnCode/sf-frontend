@@ -67,12 +67,21 @@ export default function PhotoField({
     const selection = (selectionRef.current += 1);
     const isCurrent = () => selectionRef.current === selection;
 
+    // Picking supersedes whatever was converting, so that conversion will no
+    // longer clear the busy state on its way out. A rejected file has to clear
+    // it here, or Save stays disabled and this message stays hidden behind the
+    // "Preparing photo…" line that outranks it.
+    function reject(reason: string) {
+      setPickerError(reason);
+      setConverting(false);
+    }
+
     if (!ACCEPTED_PHOTO_TYPES.includes(file.type)) {
-      setPickerError("Choose a JPEG, PNG, GIF, or WebP image.");
+      reject("Choose a JPEG, PNG, GIF, or WebP image.");
       return;
     }
     if (file.size > MAX_SOURCE_BYTES) {
-      setPickerError(
+      reject(
         `That file is over ${MAX_SOURCE_BYTES / 1024 / 1024} MB. Choose a smaller image.`,
       );
       return;

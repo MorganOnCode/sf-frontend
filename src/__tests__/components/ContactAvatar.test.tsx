@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import ContactAvatar from "@/components/contacts/ContactAvatar";
 import { makeContact } from "../mocks/handlers";
 
@@ -61,6 +61,19 @@ describe("ContactAvatar on a list row", () => {
       "src",
       "/api/contacts/7/photo/",
     );
+  });
+
+  it("falls back to initials when the photo cannot be loaded", () => {
+    // The row was rendered from a list that said a photo existed; the request
+    // for it can still come back 404 or 502.
+    const { container } = render(
+      <ContactAvatar contact={{ ...ROW, has_photo: true }} />,
+    );
+
+    fireEvent.error(container.querySelector("img")!);
+
+    expect(container.querySelector("img")).toBeNull();
+    expect(screen.getByText("GH")).toBeInTheDocument();
   });
 
   it("shows initials when the row says there is no photo", () => {

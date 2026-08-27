@@ -15,12 +15,19 @@ import { apiFetch } from "@/lib/apiClient";
 /** Headers worth forwarding from the API's response. */
 const PASS_THROUGH = ["content-type", "etag", "cache-control"];
 
+/**
+ * The whole segment has to be the ID. `Number.parseInt` reads a prefix, so it
+ * would happily turn `1abc` into contact 1 and mint an alternate URL for a photo.
+ * Capped in length so the ID stays an exact integer.
+ */
+const CONTACT_ID = /^[1-9]\d{0,14}$/;
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const id = Number.parseInt((await params).id, 10);
-  if (!Number.isInteger(id) || id < 1) {
+  const { id } = await params;
+  if (!CONTACT_ID.test(id)) {
     return new Response(null, { status: 404 });
   }
 

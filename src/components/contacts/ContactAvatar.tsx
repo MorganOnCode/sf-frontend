@@ -1,4 +1,6 @@
-import type { CSSProperties } from "react";
+"use client";
+
+import { useState, type CSSProperties } from "react";
 import { avatarHue, initials } from "@/lib/contacts/format";
 import { photoSrc } from "@/lib/contacts/photo";
 import type { Contact } from "@/lib/contacts/types";
@@ -39,9 +41,15 @@ export default function ContactAvatar({
   contact: AvatarContact;
   size?: AvatarSize;
 }) {
+  // A list row only claims a photo exists; fetching it can still fail — the
+  // contact may have lost its photo since the page rendered, or the API may be
+  // down, and the route answers 404/502 either way. Remembering *which* source
+  // failed drops us to the initials rather than an empty circle, while leaving a
+  // later, different source free to try.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const src = photoSrc(contact);
 
-  if (src) {
+  if (src && src !== failedSrc) {
     return (
       // The source is either a base64 `data:` URL or this app's own photo route,
       // neither of which next/image can optimise — a plain <img> is correct here.
@@ -52,6 +60,7 @@ export default function ContactAvatar({
         aria-hidden="true"
         loading="lazy"
         decoding="async"
+        onError={() => setFailedSrc(src)}
         className={`${CIRCLE} aspect-square border border-hairline object-cover ${SIZES[size]}`}
       />
     );

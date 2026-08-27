@@ -31,6 +31,13 @@ function pngFile(name: string) {
   return new File(["binary"], name, { type: "image/png" });
 }
 
+/** A file the picker refuses: an accepted type, but past `MAX_SOURCE_BYTES`. */
+function hugePngFile(name: string) {
+  const file = pngFile(name);
+  Object.defineProperty(file, "size", { value: 26 * 1024 * 1024 });
+  return file;
+}
+
 function photoValue(container: HTMLElement): string | null {
   return container
     .querySelector<HTMLInputElement>('input[name="photo"]')!
@@ -89,6 +96,27 @@ describe("PhotoField while a photo is converting", () => {
     pending.resolve("data:image/jpeg;base64,LATE=");
 
     await waitFor(() => expect(photoValue(container)).toBe(""));
+  });
+
+  it("ends the busy state when the next pick is rejected", async () => {
+    const pending = deferred();
+    downscale.mockReturnValueOnce(pending.promise);
+    const onBusyChange = jest.fn();
+
+    render(<PhotoField onBusyChange={onBusyChange} />);
+    const input = screen.getByLabelText(/upload photo/i);
+
+    await userEvent.upload(input, pngFile("good.png"));
+    await waitFor(() => expect(onBusyChange).toHaveBeenLastCalledWith(true));
+
+    // A refused file still supersedes the conversion in flight, so that
+    // conversion will not clear the busy state on its way out — if the refusal
+    // does not clear it either, Save stays disabled for good.
+    await userEvent.upload(input, hugePngFile("huge.png"));
+
+    await waitFor(() => expect(onBusyChange).toHaveBeenLastCalledWith(false));
+    expect(screen.getByRole("alert")).toHaveTextContent(/over 25 MB/i);
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 
   it("reports a conversion failure against the field", async () => {
